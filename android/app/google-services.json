@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "549469597315",
+    "project_id": "yankeepa-6502f",
+    "storage_bucket": "yankeepa-6502f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549469597315:android:26e9e69a6b359b057135b6",
+        "android_client_info": {
+          "package_name": "com.ypa.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549469597315-fdoh7boe2dq3uo7h7m1oeje1ffluk36m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXJ-5nAkau8_51Mgox-cyNuZuW7IPsdQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549469597315-fdoh7boe2dq3uo7h7m1oeje1ffluk36m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "549469597315-ujtn5dtsl9288mtaot3buogk6ncn5219.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ypa.driver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549469597315:android:de1eea394ea42a567135b6",
+        "android_client_info": {
+          "package_name": "com.ypa.restaurant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549469597315-fdoh7boe2dq3uo7h7m1oeje1ffluk36m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXJ-5nAkau8_51Mgox-cyNuZuW7IPsdQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549469597315-fdoh7boe2dq3uo7h7m1oeje1ffluk36m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "549469597315-ujtn5dtsl9288mtaot3buogk6ncn5219.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ypa.driver"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+  -->
+  <base href="/">
+  <meta name="google-signin-client_id" content="YOUR_GOOGLE_SIGN_IN_CLIENT_KEY">
+  <meta charset="UTF-8">  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A web app for food ordering and delivery.">
+
+  <!-- DEMO ONLY -->
+<!--  <meta name="robots" content="nofollow, noindex, max-snippet:1, max-video-preview:1, max-image-preview:standard">-->
+<!--  <link rel="canonical" href="https://efood-web.6amtech.com" />-->
+
+
+
+
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="eFood">
+  <link rel="apple-touch-icon" href="favicon.png">
+
+  <title>eFood</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+
+  <link rel="preload" href="assets/logo.png" as="image">
+  <link rel="preload" href="assets/header_icon_1.png" as="image">
+  <link rel="preload" href="assets/header_icon_2.png" as="image">
+
+  <style>.grecaptcha-badge { visibility: hidden;} </style>
+
+
+
+  <!-- // Other stuff -->
+
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvRwrEMwSptfokcyagWqGCCcxz_05PRK0&loading=async&callback=Function.prototype"></script>
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = {{flutter_service_worker_version}};
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js?version=11.4.0" defer></script>
+
+</head>
+<body>
+
+<div class="preloader">
+  <div class="preloader-container">
+    <!-- <img width="80" class="preloader-img" src="assets/img/preloader.png" alt=""> -->
+    <div id="animation-container">
+      <img width="80" src="assets/loader_image_1.png" class="animation-image" alt="" />
+      <img width="80" src="assets/loader_image_2.png" class="animation-image" alt="" />
+      <img width="80" src="assets/loader_image_3.png" class="animation-image" alt="" />
+      <img width="80" src="assets/loader_image_4.png" class="animation-image" alt="" />
+      <img width="80" src="assets/loader_image_5.png" class="animation-image" alt="" />
+    </div>
+    <div class="loader"></div>
+  </div>
+</div>
+
+
+<!-- Header -->
+<header class="header">
+  <div class="header-top-line"></div>
+  <div class="header-top-line-next"></div>
+  <div class="header-container d-flex align-items-center justify-content-between">
+    <div class="header-start d-flex gap-5 align-items-center">
+      <img class="logo" src="assets/logo.png" loading="eager" alt="">
+      <div class="placeholder placeholder-wide"></div>
+      <div class="d-flex align-items-center gap-4">
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+        <div class="placeholder"></div>
+      </div>
+    </div>
+    <div class="header-end d-flex align-items-center gap-5">
+      <div class="placeholder"></div>
+      <div class="d-flex align-items-center gap-4">
+        <div class="placeholder"></div>
+        <img src="assets/header_icon_1.png" width="20" class="header-icon" loading="eager" alt="">
+        <img src="assets/header_icon_2.png" width="16" class="header-icon" loading="eager" alt="">
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Script Goes Here -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  var images = document.querySelectorAll(".animation-image");
+  var currentIndex = 0;
+  function cycleImages() {
+      var currentImage = images[currentIndex];
+      var nextIndex = (currentIndex + 1) % images.length;
+      var nextImage = images[nextIndex];
+      currentImage.style.display = "none";
+      nextImage.style.display = "block";
+      currentIndex = nextIndex;
+  }
+  // Set an interval to call the cycleImages function every 3 seconds
+  setInterval(cycleImages, 250);
+  });
+</script>
+
+<script>
+  // Check if localStorage is supported in the browser
+    if (typeof(Storage) !== "undefined") {
+      // Get the item from localStorage
+      var itemValue = localStorage.getItem("flutter.theme");
+      // Check if the item exists
+      if (itemValue !== null) {
+        // Check the value of the item
+        if (itemValue === "true") {
+          // If the value is "true", add a class to the body
+          document.body.classList.add("theme-dark");
+        } else {
+          // If the value is not "true", remove the class from the body
+          document.body.classList.remove("theme-light");
+        }
+      } else {
+        console.log("Item not found in localStorage");
+      }
+    } else {
+      console.log("localStorage is not supported in this browser");
+    }
+
+</script>
+
+<script type="application/javascript" src="/assets/packages/flutter_inappwebview_web/assets/web/web_support.js" defer></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+
+<script>
+  window.addEventListener('load', function(ev) {
+    {{flutter_js}}
+    {{flutter_build_config}}
+
+    _flutter.loader.load({
+      serviceWorker: {
+        serviceWorkerVersion: {{flutter_service_worker_version}},
+      },
+      onEntrypointLoaded: function(engineInitializer) {
+        let config = { renderer: 'html' };
+        engineInitializer.initializeEngine(config).then(function(appRunner) {
+          appRunner.runApp();
+
+
+        });
+      }
+    });
+  });
+</script>
+
+
+<script>
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: 'AIzaSyCl2RlH2Yuh5L7ZlTsAaSyPi21KqD38yys',
+    appId: '1:549469597315:web:34bccc14d5f2a68a7135b6',
+    messagingSenderId: '549469597315',
+    projectId: 'yankeepa-6502f',
+    authDomain: 'yankeepa-6502f.firebaseapp.com',
+    storageBucket: 'yankeepa-6502f.firebasestorage.app',
+    };
+    // Initialize Firebasefi
+    const app = initializeApp(firebaseConfig);
+
+</script>
+
+
+</body>
+</html>

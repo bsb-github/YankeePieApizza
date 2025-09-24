@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+
+  efood_flutter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8222:80" 
+    restart: unless-stopped
