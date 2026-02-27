@@ -134,7 +134,6 @@ class AppConstants {
   static const String walletToken = 'wallet_token';
   static const String currentAddress = 'current_address';
   static const String lastOrderPaymentMethod = 'last_order_payment_method';
-  static const String appleLoginEmail = 'apple_login_email';
 
   static List<LanguageModel> languages = [
     LanguageModel(

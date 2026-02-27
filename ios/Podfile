@@ -37,5 +37,10 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      # Remove arm64 exclusion so app runs on Apple Silicon simulators (iPhone Air, iPhone 17, etc.)
+      config.build_settings.delete('EXCLUDED_ARCHS[sdk=iphonesimulator*]')
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = ''
+    end
   end
 end
