@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_restaurant/common/enums/data_source_enum.dart';
 import 'package:flutter_restaurant/common/models/api_response_model.dart';
 import 'package:flutter_restaurant/common/models/cart_model.dart';
@@ -178,7 +181,9 @@ class ProductProvider extends DataSyncProvider {
         fetchFromClient: () => productRepo!.getRecommendedProductApi(
             offset: offset, source: DataSourceEnum.client),
         onResponse: (responseData, _) {
+          debugPrint('Recommended API result: ${jsonEncode(responseData)}');
           _recommendedProductModel = ProductModel.fromJson(responseData);
+          notifyListeners();
         },
       );
     } else {
@@ -188,6 +193,8 @@ class ProductProvider extends DataSyncProvider {
                 offset: offset, source: DataSourceEnum.client);
         if (response?.response?.data != null &&
             response?.response?.statusCode == 200) {
+          debugPrint(
+              'Recommended API result: ${jsonEncode(response?.response?.data)}');
           if (offset == 1) {
             _recommendedProductModel =
                 ProductModel.fromJson(response?.response?.data);

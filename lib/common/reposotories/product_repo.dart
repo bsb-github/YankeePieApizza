@@ -11,8 +11,13 @@ import 'package:image_picker/image_picker.dart';
 class ProductRepo extends DataSyncRepo {
   ProductRepo({required super.dioClient, required super.sharedPreferences});
 
-  Future<ApiResponseModel<T>> getLatestProductList<T>({required int offset, required ProductSortType type,  required DataSourceEnum source}) async {
-    return await fetchData<T>('${AppConstants.latestProductUri}?limit=15&&offset=$offset&sort_by=${type.name.camelCaseToSnakeCase()}', source);
+  Future<ApiResponseModel<T>> getLatestProductList<T>(
+      {required int offset,
+      required ProductSortType type,
+      required DataSourceEnum source}) async {
+    return await fetchData<T>(
+        '${AppConstants.latestProductUri}?limit=15&&offset=$offset&sort_by=${type.name.camelCaseToSnakeCase()}',
+        source);
   }
 
   // Future<ApiResponseModel> getLatestProductList(int offset, ProductSortType type) async {
@@ -27,8 +32,11 @@ class ProductRepo extends DataSyncRepo {
   //
   // }
 
-  Future<ApiResponseModel<T>> getRecommendedProductApi<T>({required int offset, required DataSourceEnum source}) async {
-    return await fetchData<T>('${AppConstants.recommendedProductUri}?limit=100&&offset=$offset', source);
+  Future<ApiResponseModel<T>> getRecommendedProductApi<T>(
+      {required int offset, required DataSourceEnum source}) async {
+    return await fetchData<T>(
+        '${AppConstants.recommendedProductUri}?limit=10&offset=$offset',
+        source);
   }
 
   // Future<ApiResponseModel> getRecommendedProductApi(int offset) async {
@@ -43,10 +51,12 @@ class ProductRepo extends DataSyncRepo {
   //
   // }
 
-  Future<ApiResponseModel<T>> getPopularProductList<T>({required int offset, required DataSourceEnum source}) async {
-    return await fetchData<T>('${AppConstants.popularProductUri}?limit=10&&offset=$offset&product_type=all', source);
+  Future<ApiResponseModel<T>> getPopularProductList<T>(
+      {required int offset, required DataSourceEnum source}) async {
+    return await fetchData<T>(
+        '${AppConstants.popularProductUri}?limit=10&&offset=$offset&product_type=all',
+        source);
   }
-
 
   // Future<T> getPopularProductList<T>(int offset, {required DataSourceEnum dataSource}) async {
   //   switch(dataSource){
@@ -78,8 +88,10 @@ class ProductRepo extends DataSyncRepo {
   //
   // }
 
-  Future<ApiResponseModel<T>> getFlavorFulMenuProductApi<T>({required int offset, required DataSourceEnum source}) async {
-    return await fetchData<T>('${AppConstants.setMenuUri}?limit=12&&offset=$offset', source);
+  Future<ApiResponseModel<T>> getFlavorFulMenuProductApi<T>(
+      {required int offset, required DataSourceEnum source}) async {
+    return await fetchData<T>(
+        '${AppConstants.setMenuUri}?limit=12&&offset=$offset', source);
   }
   // Future<ApiResponseModel> getFlavorFulMenuProductApi(int offset) async {
   //
@@ -94,29 +106,36 @@ class ProductRepo extends DataSyncRepo {
   //
   // }
 
-
-  Future<ApiResponseModel> getReview({int? id, int ? offset}) async {
+  Future<ApiResponseModel> getReview({int? id, int? offset}) async {
     try {
-      final response = await dioClient.get("${AppConstants.getReview}$id?limit=10&offset=$offset");
+      final response = await dioClient
+          .get("${AppConstants.getReview}$id?limit=10&offset=$offset");
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
     }
   }
 
-
-  Future<ApiResponseModel> submitReview(ReviewBody reviewBody, List<XFile>? files, ) async {
+  Future<ApiResponseModel> submitReview(
+    ReviewBody reviewBody,
+    List<XFile>? files,
+  ) async {
     try {
-      final response = await dioClient.postMultipart(AppConstants.reviewUri, data: reviewBody.toJson(), files: files, fileKey: files != null ? 'attachment' : null);
+      final response = await dioClient.postMultipart(AppConstants.reviewUri,
+          data: reviewBody.toJson(),
+          files: files,
+          fileKey: files != null ? 'attachment' : null);
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
     }
   }
 
-  Future<ApiResponseModel> submitDeliveryManReview(ReviewBody reviewBody) async {
+  Future<ApiResponseModel> submitDeliveryManReview(
+      ReviewBody reviewBody) async {
     try {
-      final response = await dioClient.post(AppConstants.deliverManReviewUri, data: reviewBody);
+      final response = await dioClient.post(AppConstants.deliverManReviewUri,
+          data: reviewBody);
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
@@ -132,19 +151,15 @@ class ProductRepo extends DataSyncRepo {
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
     }
-
   }
 
   Future<ApiResponseModel> getReorderProductApi(int? orderId) async {
     try {
-      final response = await dioClient.post(AppConstants.getReorderProducts, data: {'order_id' : '$orderId'});
+      final response = await dioClient.post(AppConstants.getReorderProducts,
+          data: {'order_id': '$orderId'});
       return ApiResponseModel.withSuccess(response);
     } catch (e) {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
     }
-
   }
-
-
-
 }

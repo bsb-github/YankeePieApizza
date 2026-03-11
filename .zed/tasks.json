@@ -1,0 +1,52 @@
+[
+  {
+    "label": "Flutter: Pick iOS Simulator (boot if needed)",
+    "command": "bash -l -c 'SIM=$(xcrun simctl list devices available -j | python3 -c \"import json,sys; devs=[(v[\\\"state\\\"],v[\\\"name\\\"],v[\\\"udid\\\"]) for k,vs in json.load(sys.stdin)[\\\"devices\\\"].items() for v in vs if v[\\\"isAvailable\\\"]]; [print(\\\"[{:<8}]  {:<30}  {}\\\".format(s[:8],n,u)) for s,n,u in sorted(devs)]\"); SELECTED=$(echo \"$SIM\" | fzf --prompt=\"Select iOS Simulator: \" --ansi); [ -z \"$SELECTED\" ] && exit 0; UDID=$(echo \"$SELECTED\" | awk \"{print \\$NF}\"); STATE=$(echo \"$SELECTED\" | grep -o \\\"Booted\\\" || echo \\\"Shutdown\\\"); if [ \"$STATE\" != \"Booted\" ]; then   echo \\\"Booting simulator...\\\";   xcrun simctl boot \\\"$UDID\\\";   open -a Simulator;   sleep 4; fi; flutter run -d \\\"$UDID\\\"'",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Pick Android Emulator (boot if needed)",
+    "command": "bash -l -c 'AVD=$(flutter emulators 2>/dev/null | grep -E \"^(Pixel|android|emulator)\" | awk \"{print \\$1}\" | fzf --prompt=\"Select Android Emulator: \"); [ -z \"$AVD\" ] && exit 0; echo \"Launching $AVD...\"; flutter emulators --launch \"$AVD\"; echo \"Waiting for boot (this may take ~15s)...\"; sleep 15; flutter run -d \"$AVD\"'",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: List All Devices",
+    "command": "flutter devices",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: List Emulators",
+    "command": "flutter emulators",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Run on macOS",
+    "command": "flutter run -d macos",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Run on Chrome",
+    "command": "flutter run -d chrome",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Build APK",
+    "command": "flutter build apk",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Build iOS",
+    "command": "flutter build ios",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Clean",
+    "command": "flutter clean",
+    "shell": "system"
+  },
+  {
+    "label": "Flutter: Pub Get",
+    "command": "flutter pub get",
+    "shell": "system"
+  }
+]

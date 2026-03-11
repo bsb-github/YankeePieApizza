@@ -1,0 +1,17 @@
+[
+  {
+    "adapter": "flutter",
+    "label": "Launch iOS Simulator",
+    "request": "launch",
+    "program": "lib/main.dart",
+    "deviceId": "D41AAE8A-A305-4A76-B412-1CB81E2EA468",
+    "hotReloadOnSave": true,
+  },
+  {
+    "adapter": "flutter",
+    "label": "Launch Chrome",
+    "request": "launch",
+    "program": "lib/main.dart",
+    "deviceId": "chrome",
+  },
+]
