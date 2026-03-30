@@ -23,6 +23,7 @@ import 'package:flutter_restaurant/features/cart/providers/cart_provider.dart';
 import 'package:flutter_restaurant/features/cart/providers/frequently_bought_provider.dart';
 import 'package:flutter_restaurant/features/category/providers/category_provider.dart';
 import 'package:flutter_restaurant/features/chat/providers/chat_provider.dart';
+import 'package:flutter_restaurant/features/chatbot/providers/chatbot_provider.dart';
 import 'package:flutter_restaurant/features/checkout/providers/checkout_provider.dart';
 import 'package:flutter_restaurant/features/coupon/providers/coupon_provider.dart';
 import 'package:flutter_restaurant/features/home/providers/banner_provider.dart';
@@ -155,6 +156,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<CheckoutProvider>()),
       ChangeNotifierProvider(
           create: (context) => di.sl<FrequentlyBoughtProvider>()),
+      ChangeNotifierProvider(create: (context) => di.sl<ChatBotProvider>()),
     ],
     child: MyApp(
         orderId: orderID,

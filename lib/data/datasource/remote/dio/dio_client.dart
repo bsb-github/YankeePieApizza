@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_restaurant/data/datasource/remote/dio/logging_interceptor.dart';
@@ -14,46 +15,44 @@ class DioClient {
   Dio? dio;
   String? token;
 
-  DioClient(this.baseUrl,
-      Dio? dioC, {
-        required this.loggingInterceptor,
-        required this.sharedPreferences,
-      }) {
+  DioClient(
+    this.baseUrl,
+    Dio? dioC, {
+    required this.loggingInterceptor,
+    required this.sharedPreferences,
+  }) {
     token = sharedPreferences.getString(AppConstants.token);
     dio = dioC ?? Dio();
 
     updateHeader(dioC: dioC, getToken: token);
-
-
   }
 
-  Future<void> updateHeader({String? getToken, Dio? dioC})async {
+  Future<void> updateHeader({String? getToken, Dio? dioC}) async {
     dio
       ?..options.baseUrl = baseUrl
       ..options.connectTimeout = const Duration(seconds: 30)
-      ..options.receiveTimeout = const Duration(seconds: 30)
+      ..options.receiveTimeout = const Duration(seconds: 60)
       ..httpClientAdapter
       ..options.headers = {
-
         'Content-Type': 'application/json; charset=UTF-8',
         'branch-id': '${sharedPreferences.getInt(AppConstants.branch)}',
-        'X-localization': sharedPreferences.getString(AppConstants.languageCode)
-            ?? AppConstants.languages[0].languageCode,
+        'X-localization':
+            sharedPreferences.getString(AppConstants.languageCode) ??
+                AppConstants.languages[0].languageCode,
         'Authorization': 'Bearer $getToken',
-
       };
     dio?.interceptors.add(loggingInterceptor);
   }
 
-
-
-  Future<Response> get(String uri, {
+  Future<Response> get(
+    String uri, {
     Map<String, dynamic>? queryParameters,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
-      debugPrint('apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
+      debugPrint(
+          'apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
       var response = await dio!.get(
         uri,
         queryParameters: queryParameters,
@@ -70,7 +69,8 @@ class DioClient {
     }
   }
 
-  Future<Response> post(String uri, {
+  Future<Response> post(
+    String uri, {
     data,
     Map<String, dynamic>? queryParameters,
     CancelToken? cancelToken,
@@ -78,7 +78,8 @@ class DioClient {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
-      debugPrint('apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers} \nbody---> $data');
+      debugPrint(
+          'apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers} \nbody---> $data');
 
       var response = await dio!.post(
         uri,
@@ -96,14 +97,16 @@ class DioClient {
     }
   }
 
-  Future<Response> put(String uri, {
+  Future<Response> put(
+    String uri, {
     data,
     Map<String, dynamic>? queryParameters,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    debugPrint('apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
+    debugPrint(
+        'apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
 
     try {
       var response = await dio!.put(
@@ -122,12 +125,14 @@ class DioClient {
     }
   }
 
-  Future<Response> delete(String uri, {
+  Future<Response> delete(
+    String uri, {
     data,
     Map<String, dynamic>? queryParameters,
     CancelToken? cancelToken,
   }) async {
-    debugPrint('apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
+    debugPrint(
+        'apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
 
     try {
       var response = await dio!.delete(
@@ -144,8 +149,8 @@ class DioClient {
     }
   }
 
-
-  Future<Response> postMultipart(String uri, {
+  Future<Response> postMultipart(
+    String uri, {
     Map<String, dynamic>? data,
     List<XFile?>? files,
     String? fileKey,
@@ -155,13 +160,14 @@ class DioClient {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    debugPrint('apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
+    debugPrint(
+        'apiCall ==> url=> $uri \nparams---> $queryParameters\nheader=> ${dio!.options.headers}');
 
-    try{
+    try {
       List<MultipartFile> fileList = [];
 
-      if(files != null) {
-        for(int i = 0; i < files.length; i++) {
+      if (files != null) {
+        for (int i = 0; i < files.length; i++) {
           fileList.add(MultipartFile.fromBytes(
             await files[i]!.readAsBytes(),
             filename: files[i]!.name,
@@ -169,17 +175,14 @@ class DioClient {
         }
       }
 
-      if(fileList.isNotEmpty) {
+      if (fileList.isNotEmpty) {
         data?.addAll({
-          '${fileKey ?? 'image'}[]' : fileList,
+          '${fileKey ?? 'image'}[]': fileList,
         });
       }
-    }catch(e) {
+    } catch (e) {
       rethrow;
     }
-
-
-
 
     try {
       var response = await dio!.post(
