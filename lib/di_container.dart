@@ -105,6 +105,7 @@ Future<void> init() async {
         searchRepo: sl(),
         couponRepo: sl(),
         orderRepo: sl(),
+        cartProvider: sl(),
       ));
   sl.registerLazySingleton(
       () => WalletRepo(dioClient: sl(), sharedPreferences: sl()));

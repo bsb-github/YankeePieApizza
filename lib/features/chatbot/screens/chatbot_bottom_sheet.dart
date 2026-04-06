@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_restaurant/features/auth/providers/auth_provider.dart';
 import 'package:flutter_restaurant/features/chatbot/domain/models/chatbot_message_model.dart';
 import 'package:flutter_restaurant/features/chatbot/providers/chatbot_provider.dart';
+import 'package:flutter_restaurant/features/splash/providers/splash_provider.dart';
 import 'package:flutter_restaurant/helper/router_helper.dart';
-import 'package:flutter_restaurant/utill/app_constants.dart';
 import 'package:flutter_restaurant/utill/color_resources.dart';
 import 'package:flutter_restaurant/utill/dimensions.dart';
 import 'package:flutter_restaurant/utill/styles.dart';
@@ -644,6 +644,8 @@ class _ActionCard extends StatelessWidget {
         return _CouponResultCard(
           coupon: data?['coupon'] as Map<String, dynamic>?,
         );
+      case 'add_to_cart':
+        return _AddToCartResultCard(data: data);
       default:
         return const SizedBox.shrink();
     }
@@ -681,10 +683,10 @@ class _ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = product['name'] as String? ?? '';
     final price = product['price'];
-    final imageUrl = product['image'] as String? ?? '';
-
-    print('Product rating: $imageUrl');
-    final rating = product['rating'];
+    final rawImage = product['image'] as String? ?? '';
+    final splashProvider = Provider.of<SplashProvider>(context, listen: false);
+    final String fullImageUrl =
+        '${splashProvider.baseUrls?.productImageUrl ?? ''}/$rawImage';
 
     return Container(
       width: 130,
@@ -706,7 +708,7 @@ class _ProductCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(Dimensions.radiusDefault)),
               child: Image.network(
-                '${AppConstants.baseUrl}/$imageUrl',
+                fullImageUrl,
                 height: 80,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -1653,6 +1655,130 @@ class _InputRow extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Add to Cart Result Card
+// ---------------------------------------------------------------------------
+class _AddToCartResultCard extends StatelessWidget {
+  final Map<String, dynamic>? data;
+  const _AddToCartResultCard({this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    if (data == null) return const SizedBox.shrink();
+
+    final bool added = data!['added'] as bool? ?? false;
+    final String productName = data!['product_name'] as String? ?? '';
+    final int quantity = data!['quantity'] as int? ?? 1;
+    final dynamic price = data!['price'];
+
+    return Container(
+      padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+        border: Border.all(
+          color: added
+              ? Colors.green.withValues(alpha: 0.4)
+              : Colors.red.withValues(alpha: 0.4),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Status icon
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: added
+                  ? Colors.green.withValues(alpha: 0.12)
+                  : Colors.red.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              added ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+              color: added ? Colors.green : Colors.red,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: Dimensions.paddingSizeSmall),
+          // Product info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  added ? 'Added to cart' : 'Failed to add',
+                  style: rubikSemiBold.copyWith(
+                    fontSize: Dimensions.fontSizeSmall,
+                    color: added ? Colors.green : Colors.red,
+                  ),
+                ),
+                if (productName.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '$productName × $quantity',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: rubikRegular.copyWith(
+                      fontSize: Dimensions.fontSizeSmall,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // Price + view cart
+          if (added) ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (price != null)
+                  Text(
+                    '\$${(price as double).toStringAsFixed(2)}',
+                    style: rubikSemiBold.copyWith(
+                      fontSize: Dimensions.fontSizeSmall,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    RouterHelper.getDashboardRoute('cart');
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'View Cart',
+                      style: rubikMedium.copyWith(
+                        color: Colors.white,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }

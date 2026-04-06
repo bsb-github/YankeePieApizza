@@ -162,4 +162,16 @@ class ProductRepo extends DataSyncRepo {
       return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+  /// Fetches full product details for a single product by its [id].
+  /// Calls GET /api/v1/products/details/{id}.
+  Future<ApiResponseModel> getProductDetails(int id) async {
+    try {
+      final response =
+          await dioClient.get('${AppConstants.productDetailsUri}$id');
+      return ApiResponseModel.withSuccess(response);
+    } catch (e) {
+      return ApiResponseModel.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
 }

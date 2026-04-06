@@ -24,7 +24,7 @@ class ProductModel {
 
     }
 
-    if (json['products'] != null) {
+    if (json['products'] != null && json['products'] is List) {
       products = [];
       json['products'].forEach((v) {
         products!.add(Product.fromJson(v));
@@ -163,7 +163,7 @@ class Product {
     _description = json['description'];
     _image = json['image'];
     _price = json['price'].toDouble();
-    if (json['variations'] != null) {
+    if (json['variations'] != null && json['variations'] is List) {
       _variations = [];
       json['variations'].forEach((v) {
         if(!v.containsKey('price')){
@@ -172,7 +172,7 @@ class Product {
 
       });
     }
-    if (json['add_ons'] != null) {
+    if (json['add_ons'] != null && json['add_ons'] is List) {
       _addOns = [];
      try{
        json['add_ons'].forEach((v) {
@@ -191,13 +191,13 @@ class Product {
     _createdAt = json['created_at'];
     _updatedAt = json['updated_at'];
     _attributes = json['attributes'].cast<String>();
-    if (json['category_ids'] != null) {
+    if (json['category_ids'] != null && json['category_ids'] is List) {
       _categoryIds = [];
       json['category_ids'].forEach((v) {
         _categoryIds!.add(CategoryId.fromJson(v));
       });
     }
-    if (json['choice_options'] != null) {
+    if (json['choice_options'] != null && json['choice_options'] is List) {
       _choiceOptions = [];
       json['choice_options'].forEach((v) {
         _choiceOptions!.add(ChoiceOption.fromJson(v));
@@ -207,7 +207,7 @@ class Product {
     _discountType = json['discount_type'];
     _taxType = json['tax_type'];
     _setMenu = json['set_menu'];
-    if (json['rating'] != null) {
+    if (json['rating'] != null && json['rating'] is List) {
       _rating = [];
       json['rating'].forEach((v) {
         _rating!.add(AvgRating.fromJson(v));

@@ -12,7 +12,7 @@ class ErrorResponseModel {
   }
 
   ErrorResponseModel.fromJson(dynamic json) {
-    if (json["errors"] != null) {
+    if (json["errors"] != null && json["errors"] is List) {
       _errors = [];
       json["errors"].forEach((v) {
         _errors!.add(Errors.fromJson(v));
