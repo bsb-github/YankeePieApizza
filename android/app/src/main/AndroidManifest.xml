@@ -34,7 +34,7 @@
         android:icon="@mipmap/ic_launcher">
         android:allowBackup="false"
         android:fullBackupOnly="false"
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBvRwrEMwSptfokcyagWqGCCcxz_05PRK0"/>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyD6qJQP7wHvjxEhjtD9Go2NCQkspp48YnM"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
