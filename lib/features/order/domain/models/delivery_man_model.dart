@@ -65,4 +65,9 @@ class DeliveryManModel {
     data['updated_at'] = _updatedAt;
     return data;
   }
+
+  void updateLocation(double lat, double lng) {
+    _latitude = lat;
+    _longitude = lng;
+  }
 }

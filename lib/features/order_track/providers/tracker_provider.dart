@@ -33,68 +33,87 @@ class TrackerProvider with ChangeNotifier {
     super.dispose();
   }
 
-  Duration? getEstimateDuration(Order? order, BuildContext context, {bool isStarTimer = false}) {
+  Duration? getEstimateDuration(Order? order, BuildContext context,
+      {bool isStarTimer = false}) {
     DateTime orderTime;
-    if(Provider.of<SplashProvider>(context, listen: false).configModel!.timeFormat == '12') {
-      orderTime =  DateFormat("yyyy-MM-dd HH:mm").parse('${order?.deliveryDate} ${order?.deliveryTime}');
-
-    }else{
-      orderTime =  DateFormat("yyyy-MM-dd HH:mm").parse('${order?.deliveryDate} ${order?.deliveryTime}');
+    if (Provider.of<SplashProvider>(context, listen: false)
+            .configModel!
+            .timeFormat ==
+        '12') {
+      orderTime = DateFormat("yyyy-MM-dd HH:mm")
+          .parse('${order?.deliveryDate} ${order?.deliveryTime}');
+    } else {
+      orderTime = DateFormat("yyyy-MM-dd HH:mm")
+          .parse('${order?.deliveryDate} ${order?.deliveryTime}');
     }
 
-    DateTime endTime = orderTime.add(Duration(minutes: int.tryParse('${order?.preparationTime}') ?? 0));
+    DateTime endTime = orderTime
+        .add(Duration(minutes: int.tryParse('${order?.preparationTime}') ?? 0));
     _duration = endTime.difference(DateTime.now());
 
-    if(isStarTimer) {
+    if (isStarTimer) {
       _timer?.cancel();
       _timer = null;
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if(!_duration!.isNegative && _duration!.inSeconds > 0) {
+        if (!_duration!.isNegative && _duration!.inSeconds > 0) {
           _duration = _duration! - const Duration(seconds: 1);
           notifyListeners();
         }
-
       });
     }
 
-    if(_duration!.isNegative) {
+    if (_duration!.isNegative) {
       _duration = const Duration();
     }
 
     _duration = endTime.difference(DateTime.now());
 
-    if(_duration!.isNegative) {
+    if (_duration!.isNegative) {
       _duration = const Duration();
     }
     return _duration;
   }
 
+  Future<void> startLocationService(
+      {int? deliverymanId,
+      int? orderId,
+      GoogleMapController? mapController,
+      LatLng? userLocation}) async {
+    getDeliveryManData(
+        deliverymanId: deliverymanId,
+        orderId: orderId,
+        mapController: mapController,
+        userLocation: userLocation);
 
-
-  Future<void> startLocationService({int? deliverymanId, int? orderId ,GoogleMapController? mapController, LatLng? userLocation}) async {
-
-    getDeliveryManData(deliverymanId : deliverymanId,orderId: orderId,  mapController: mapController, userLocation: userLocation);
-
+    _locationServiceTimer?.cancel();
     _locationServiceTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
-      getDeliveryManData(deliverymanId : deliverymanId, orderId: orderId, mapController: mapController, userLocation: userLocation);
-
+      getDeliveryManData(
+          deliverymanId: deliverymanId,
+          orderId: orderId,
+          mapController: mapController,
+          userLocation: userLocation);
       if (kDebugMode) {
-        print("------------------------- Location service started ----------------------- ");
+        print('------------------------- Location service started ----------------------- ');
       }
     });
   }
 
   void stopLocationService() {
-    _locationServiceTimer!.cancel();
+    _locationServiceTimer?.cancel();
     if (kDebugMode) {
-      print("------------------------- Location service disposed ----------------------- ");
+      print('------------------------- Location service disposed ----------------------- ');
     }
   }
 
-
-  Future<void> getDeliveryManData({int? deliverymanId, int? orderId , GoogleMapController? mapController, LatLng? userLocation}) async {
-    ApiResponseModel apiResponse = await timeRepo!.getDeliveryManData(deliverymanId: deliverymanId, orderId: orderId);
-    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+  Future<void> getDeliveryManData(
+      {int? deliverymanId,
+      int? orderId,
+      GoogleMapController? mapController,
+      LatLng? userLocation}) async {
+    ApiResponseModel apiResponse = await timeRepo!
+        .getDeliveryManData(deliverymanId: deliverymanId, orderId: orderId);
+    if (apiResponse.response != null &&
+        apiResponse.response!.statusCode == 200) {
       _deliveryManModel = DeliveryManModel.fromJson(apiResponse.response!.data);
       _setMarker(mapController: mapController, userLocation: userLocation);
     } else {
@@ -103,30 +122,42 @@ class TrackerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSouthwestPadding( {required bool isExpanded, GoogleMapController? mapController, LatLng? userLocation}){
+  void setSouthwestPadding(
+      {required bool isExpanded,
+      GoogleMapController? mapController,
+      LatLng? userLocation}) {
     _isBottomSheetExpanded = isExpanded;
     _setMarker(mapController: mapController, userLocation: userLocation);
   }
 
-  void _setMarker({GoogleMapController? mapController, LatLng? userLocation}) async {
+  void _setMarker(
+      {GoogleMapController? mapController, LatLng? userLocation}) async {
     try {
+      final BitmapDescriptor deliverymanIcon = await _convertAssetToUnit8List(
+          Images.deliveryBoyMarker,
+          width: 40,
+          height: 70);
+      final BitmapDescriptor userIcon = await _convertAssetToUnit8List(
+          Images.destinationMarker,
+          width: 50,
+          height: 70);
 
-      final BitmapDescriptor deliverymanIcon = await  _convertAssetToUnit8List(Images.deliveryBoyMarker, width: 40, height: 70);
-      final BitmapDescriptor userIcon = await  _convertAssetToUnit8List(Images.destinationMarker, width:  50, height: 70);
+      if (mapController != null) {
+        LatLng? deliverymanLocation;
 
-      if (mapController != null ) {
-
-        LatLng ? deliverymanLocation;
-
-        if(_deliveryManModel != null){
-          deliverymanLocation = LatLng(_deliveryManModel?.latitude ?? 23.0, _deliveryManModel?.longitude ?? 90.0);
+        if (_deliveryManModel != null) {
+          deliverymanLocation = LatLng(_deliveryManModel?.latitude ?? 23.0,
+              _deliveryManModel?.longitude ?? 90.0);
         }
 
-        _mapBound(controller: mapController, userLocation: userLocation, deliverymanLocation: deliverymanLocation);
+        _mapBound(
+            controller: mapController,
+            userLocation: userLocation,
+            deliverymanLocation: deliverymanLocation);
 
         _markers = HashSet<Marker>();
 
-        if(userLocation !=null){
+        if (userLocation != null) {
           _markers.add(Marker(
             markerId: const MarkerId('destination'),
             position: userLocation,
@@ -138,35 +169,36 @@ class TrackerProvider with ChangeNotifier {
           ));
         }
 
-       if(deliverymanLocation != null){
-         _markers.add(Marker(
-           markerId: const MarkerId('delivery_boy'),
-           position: deliverymanLocation,
-           infoWindow: InfoWindow(
-             title: 'Delivery Man',
-             snippet: '${deliverymanLocation.latitude}, ${deliverymanLocation.longitude}',
-           ),
-           icon: deliverymanIcon,
-         ));
-       }
+        if (deliverymanLocation != null) {
+          _markers.add(Marker(
+            markerId: const MarkerId('delivery_boy'),
+            position: deliverymanLocation,
+            infoWindow: InfoWindow(
+              title: 'Delivery Man',
+              snippet:
+                  '${deliverymanLocation.latitude}, ${deliverymanLocation.longitude}',
+            ),
+            icon: deliverymanIcon,
+          ));
+        }
       }
-
-    }catch(e) {
+    } catch (e) {
       debugPrint('error ===> $e');
     }
 
     notifyListeners();
-
   }
 
-
-  void _mapBound({GoogleMapController? controller, LatLng? userLocation, LatLng? deliverymanLocation}) async {
+  void _mapBound(
+      {GoogleMapController? controller,
+      LatLng? userLocation,
+      LatLng? deliverymanLocation}) async {
     List<LatLng> latLongList = [];
 
-    if(userLocation !=null){
+    if (userLocation != null) {
       latLongList.add(userLocation);
     }
-    if(deliverymanLocation !=null){
+    if (deliverymanLocation != null) {
       latLongList.add(deliverymanLocation);
     }
 
@@ -175,19 +207,28 @@ class TrackerProvider with ChangeNotifier {
     LatLngBounds bounds = _boundsFromLatLngList(latLongList);
     double distance = 1;
 
-    if(userLocation != null && deliverymanLocation !=null){
+    if (userLocation != null && deliverymanLocation != null) {
       /// Distance in KM
-      distance = Geolocator.distanceBetween(userLocation.latitude, userLocation.longitude, deliverymanLocation.latitude, deliverymanLocation.longitude)/1000;
+      distance = Geolocator.distanceBetween(
+              userLocation.latitude,
+              userLocation.longitude,
+              deliverymanLocation.latitude,
+              deliverymanLocation.longitude) /
+          1000;
     }
 
-    LatLng southwest = LatLng(bounds.southwest.latitude - distance/(_isBottomSheetExpanded? 100 : 1000), bounds.southwest.longitude);
+    LatLng southwest = LatLng(
+        bounds.southwest.latitude -
+            distance / (_isBottomSheetExpanded ? 100 : 1000),
+        bounds.southwest.longitude);
     LatLng northeast = bounds.northeast;
-    LatLngBounds adjustedBounds = LatLngBounds(southwest: southwest, northeast: northeast);
+    LatLngBounds adjustedBounds =
+        LatLngBounds(southwest: southwest, northeast: northeast);
 
     Future.delayed(const Duration(milliseconds: 100), () {
-      controller?.animateCamera(CameraUpdate.newLatLngBounds(adjustedBounds, 100));
+      controller
+          ?.animateCamera(CameraUpdate.newLatLngBounds(adjustedBounds, 100));
     });
-
   }
 
   LatLngBounds _boundsFromLatLngList(List<LatLng> list) {
@@ -203,11 +244,14 @@ class TrackerProvider with ChangeNotifier {
         if (latLng.longitude < y0!) y0 = latLng.longitude;
       }
     }
-    return LatLngBounds(northeast: LatLng(x1 ?? 0, y1 ?? 0), southwest: LatLng(x0 ?? 0, y0 ?? 0));
+    return LatLngBounds(
+        northeast: LatLng(x1 ?? 0, y1 ?? 0),
+        southwest: LatLng(x0 ?? 0, y0 ?? 0));
   }
 
-  Future<BitmapDescriptor> _convertAssetToUnit8List(String imagePath, {double height = 50 ,double width = 50}) async {
-    return BitmapDescriptor.asset(ImageConfiguration(size: Size(width, height)), imagePath);
+  Future<BitmapDescriptor> _convertAssetToUnit8List(String imagePath,
+      {double height = 50, double width = 50}) async {
+    return BitmapDescriptor.asset(
+        ImageConfiguration(size: Size(width, height)), imagePath);
   }
-
 }

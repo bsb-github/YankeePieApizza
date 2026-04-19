@@ -519,13 +519,25 @@ class LocationProvider with ChangeNotifier {
 
   Future<List<PredictionModel>> searchLocation(
       BuildContext context, String text) async {
+    _predictionList = [];
+
     if (text.isNotEmpty) {
-      ApiResponseModel response = await locationRepo!.searchLocation(text);
+      final ApiResponseModel response =
+          await locationRepo!.searchLocation(text);
 
       if (response.response?.statusCode == 200) {
-        _predictionList = [];
-        response.response?.data['suggestions'].forEach((prediction) =>
-            _predictionList.add(PredictionModel.fromJson(prediction)));
+        final dynamic data = response.response?.data;
+        final dynamic rawSuggestions = data is Map<String, dynamic>
+            ? (data['suggestions'] ?? data['predictions'])
+            : null;
+
+        if (rawSuggestions is List) {
+          for (final dynamic prediction in rawSuggestions) {
+            if (prediction is Map<String, dynamic>) {
+              _predictionList.add(PredictionModel.fromJson(prediction));
+            }
+          }
+        }
       } else {
         ApiCheckerHelper.checkApi(response);
       }

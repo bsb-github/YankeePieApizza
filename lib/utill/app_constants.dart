@@ -115,6 +115,7 @@ class AppConstants {
       '/api/v1/customer/update-referral-check';
 
   // Shared Key
+  static const String mapsKey = "AIzaSyBvRwrEMwSptfokcyagWqGCCcxz_05PRK0";
   static const String theme = 'theme';
   static const String token = 'token';
   static const String languageCode = 'language_code';
