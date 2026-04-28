@@ -83,11 +83,13 @@ class _TrackMapScreenWebState extends State<TrackMapScreenWeb> {
                               orderId: widget.orderId,
                               mapController: _mapController,
                               userLocation: widget.initialUserLocation,
+                              primaryColor: Theme.of(context).primaryColor,
                             );
                           },
                           zoomControlsEnabled: true,
                           myLocationButtonEnabled: false,
                           markers: timerProvider.markers,
+                          polylines: timerProvider.polylines,
                         ),
                       ),
                     ),

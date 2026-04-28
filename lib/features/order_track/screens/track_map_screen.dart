@@ -100,11 +100,13 @@ class _TrackMapScreenState extends State<TrackMapScreen> {
                 orderId: widget.orderId,
                 mapController: _mapController,
                 userLocation: _initialUserLocation,
+                primaryColor: Theme.of(context).primaryColor,
               );
             },
             zoomControlsEnabled: true,
             myLocationButtonEnabled: false,
             markers: timerProvider.markers,
+            polylines: timerProvider.polylines,
           ),
 
           DraggableScrollableSheet(
@@ -231,7 +233,8 @@ class _TrackMapScreenState extends State<TrackMapScreen> {
     _draggableScrollableController.addListener((){
       _trackerProvider?.setSouthwestPadding(
         isExpanded: _draggableScrollableController.size == _bottomSheetMaxSize ,
-        mapController: _mapController, userLocation: _initialUserLocation
+        mapController: _mapController, userLocation: _initialUserLocation,
+        primaryColor: Theme.of(context).primaryColor,
       );
     });
 

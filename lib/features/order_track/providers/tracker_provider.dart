@@ -25,6 +25,8 @@ class TrackerProvider with ChangeNotifier {
   DeliveryManModel? _deliveryManModel;
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
+  Set<Polyline> _polylines = {};
+  Set<Polyline> get polylines => _polylines;
   bool _isBottomSheetExpanded = false;
 
   @override
@@ -78,12 +80,14 @@ class TrackerProvider with ChangeNotifier {
       {int? deliverymanId,
       int? orderId,
       GoogleMapController? mapController,
-      LatLng? userLocation}) async {
+      LatLng? userLocation,
+      Color primaryColor = Colors.red}) async {
     getDeliveryManData(
         deliverymanId: deliverymanId,
         orderId: orderId,
         mapController: mapController,
-        userLocation: userLocation);
+        userLocation: userLocation,
+        primaryColor: primaryColor);
 
     _locationServiceTimer?.cancel();
     _locationServiceTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
@@ -91,7 +95,8 @@ class TrackerProvider with ChangeNotifier {
           deliverymanId: deliverymanId,
           orderId: orderId,
           mapController: mapController,
-          userLocation: userLocation);
+          userLocation: userLocation,
+          primaryColor: primaryColor);
       if (kDebugMode) {
         print('------------------------- Location service started ----------------------- ');
       }
@@ -109,13 +114,14 @@ class TrackerProvider with ChangeNotifier {
       {int? deliverymanId,
       int? orderId,
       GoogleMapController? mapController,
-      LatLng? userLocation}) async {
+      LatLng? userLocation,
+      Color primaryColor = Colors.red}) async {
     ApiResponseModel apiResponse = await timeRepo!
         .getDeliveryManData(deliverymanId: deliverymanId, orderId: orderId);
     if (apiResponse.response != null &&
         apiResponse.response!.statusCode == 200) {
       _deliveryManModel = DeliveryManModel.fromJson(apiResponse.response!.data);
-      _setMarker(mapController: mapController, userLocation: userLocation);
+      _setMarker(mapController: mapController, userLocation: userLocation, primaryColor: primaryColor);
     } else {
       ApiCheckerHelper.checkApi(apiResponse);
     }
@@ -125,13 +131,14 @@ class TrackerProvider with ChangeNotifier {
   void setSouthwestPadding(
       {required bool isExpanded,
       GoogleMapController? mapController,
-      LatLng? userLocation}) {
+      LatLng? userLocation,
+      Color primaryColor = Colors.red}) {
     _isBottomSheetExpanded = isExpanded;
-    _setMarker(mapController: mapController, userLocation: userLocation);
+    _setMarker(mapController: mapController, userLocation: userLocation, primaryColor: primaryColor);
   }
 
   void _setMarker(
-      {GoogleMapController? mapController, LatLng? userLocation}) async {
+      {GoogleMapController? mapController, LatLng? userLocation, Color primaryColor = Colors.red}) async {
     try {
       final BitmapDescriptor deliverymanIcon = await _convertAssetToUnit8List(
           Images.deliveryBoyMarker,
@@ -156,6 +163,7 @@ class TrackerProvider with ChangeNotifier {
             deliverymanLocation: deliverymanLocation);
 
         _markers = HashSet<Marker>();
+        _polylines = {};
 
         if (userLocation != null) {
           _markers.add(Marker(
@@ -179,6 +187,19 @@ class TrackerProvider with ChangeNotifier {
                   '${deliverymanLocation.latitude}, ${deliverymanLocation.longitude}',
             ),
             icon: deliverymanIcon,
+          ));
+        }
+
+        // Draw polyline from delivery man to destination
+        if (deliverymanLocation != null && userLocation != null) {
+          _polylines.add(Polyline(
+            polylineId: const PolylineId('delivery_route'),
+            points: [deliverymanLocation, userLocation],
+            color: primaryColor,
+            width: 4,
+            startCap: Cap.roundCap,
+            endCap: Cap.roundCap,
+            jointType: JointType.round,
           ));
         }
       }
